@@ -2,7 +2,9 @@ import torch
 import math
 
 def generate_data(data_size):
+    # Generate uniform input
     input = torch.Tensor(data_size, 2).uniform_(0, 1)
+    # Compute target
     target = torch.LongTensor([1 if (i - 0.5).pow(2).sum().item() < 1.0 / (2.0 * math.pi) else 0 for i in input])
     return input, target
 
