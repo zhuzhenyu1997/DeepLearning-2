@@ -15,6 +15,7 @@ class Solver(object):
         self.output_size = config.output_size
         self.hidden_size = config.hidden_size
         self.loss = config.loss
+        self.normalize = config.normalize
         print(config)
 
         # Set logs
@@ -29,9 +30,10 @@ class Solver(object):
         self.test_input, self.test_target = generate_data(self.data_size)
 
         # Normalize data
-        mean, std = self.train_input.mean(), self.train_input.std()
-        self.train_input.sub_(mean).div_(std)
-        self.test_input.sub_(mean).div_(std)
+        if self.normalize == True:
+            mean, std = self.train_input.mean(), self.train_input.std()
+            self.train_input.sub_(mean).div_(std)
+            self.test_input.sub_(mean).div_(std)
 
         # Create model
         self.model = Sequential(
