@@ -1,4 +1,4 @@
-import torch
+from torch import empty
 import math
 
 class Linear(object):
@@ -15,12 +15,12 @@ class Linear(object):
         :param bias: if True, add bias item.
         """
         # initialize weight parameter
-        self.parameters = [torch.empty(out_dim, in_dim)]
+        self.parameters = [empty(out_dim, in_dim)]
         self.parameters[0].normal_(0, math.sqrt(2 / out_dim))
 
         # initialize bias parameter
         if bias:
-            self.parameters.append(torch.empty(out_dim))
+            self.parameters.append(empty(out_dim))
             self.parameters[-1].zero_()
 
         self.bias = bias
@@ -77,7 +77,7 @@ class Tanh(object):
         :return: Tanh(input).
         """
         self.input = input
-        return torch.tanh(input)
+        return input.tanh()
 
     def backward(self, gradwrtoutput):
         """

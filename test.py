@@ -1,6 +1,6 @@
 import os
 import argparse
-import torch
+from torch import set_grad_enabled
 from solver import Solver
 
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         os.makedirs(config.log_path)
 
     # Turn off the auto_grad
-    torch.set_grad_enabled(False)
+    set_grad_enabled(False)
 
     # Training
     solver = Solver(config)

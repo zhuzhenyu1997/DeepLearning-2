@@ -1,6 +1,7 @@
 from model import *
 from utils import *
-import torch
+from torch import empty
+from torch import set_grad_enabled
 
 class Solver(object):
     def __init__(self, config):
@@ -42,14 +43,16 @@ class Solver(object):
 
     def train(self):
         # Turn off the auto_grad
-        torch.set_grad_enabled(False)
+        set_grad_enabled(False)
         for epoch in range(self.epoch_num):
 
             for input, target in zip(self.train_input.split(self.batch_size), self.train_target.split(self.batch_size)):
                 # forward
                 pred = self.model.forward(input)
-                labels = torch.ones(input.size(0), 2) * -1
+                labels = empty(input.size(0), 2)
+                labels = labels.zero_()
                 labels.scatter_(1, target.unsqueeze(1), 1)
+                labels = labels * 2 - 1
 
                 # mini-batch SGD
                 self.criterion.forward(pred, labels)
@@ -62,16 +65,20 @@ class Solver(object):
                 self.model.update(update_param)
 
             # Record train loss
-            labels = torch.ones(self.train_input.size(0), 2) * -1
+            labels = empty(self.train_input.size(0), 2)
+            labels = labels.zero_()
             labels.scatter_(1, self.train_target.unsqueeze(1), 1)
+            labels = labels * 2 - 1
             pred = self.model.forward(self.train_input)
             loss = self.criterion.forward(pred, labels).item()
             print('Epoch %d: train loss = %.6f,' % (epoch + 1, loss), end=' ')
             self.logs.write('Epoch %d: train loss = %.6f, ' % (epoch + 1, loss))
 
             # Record test loss
-            labels = torch.ones(self.test_input.size(0), 2) * -1
+            labels = empty(self.test_input.size(0), 2)
+            labels = labels.zero_()
             labels.scatter_(1, self.test_target.unsqueeze(1), 1)
+            labels = labels * 2 - 1
             pred = self.model.forward(self.test_input)
             loss = self.criterion.forward(pred, labels).item()
             print('test loss = %.6f,' % loss, end=' ')
